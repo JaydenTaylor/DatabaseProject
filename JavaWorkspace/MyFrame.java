@@ -1,4 +1,6 @@
 //import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.event.*;
 import javax.swing.*;
 
@@ -61,10 +63,22 @@ public class MyFrame {
 		
 		btn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-			//displayTable
-			System.out.println(cb.getSelectedIndex());
+				displayTable(cb.getSelectedIndex());
 			}
 		});
+	}
+	public void displayTable(int table) {
+        JPanel panel = new JPanel(new GridLayout(0,1));
+        for (int i = 0; i < 10; i++) {
+            panel.add(new JButton("Test " + i));
+        }
+        JScrollPane scrollPane = new JScrollPane(panel);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setBounds(10, 40, 100, 80);
+		frame.add(scrollPane);
+        frame.setVisible(true);
+		System.out.println(table);
 	}
 	
 	public void viewBuilder() {
@@ -90,7 +104,7 @@ public class MyFrame {
 		mainMenu.setBounds(10, 10, 50, 20);
 		mainMenu.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-			menuBuilder();
+				menuBuilder();
 			}
 		});
 		frame.add(mainMenu);
