@@ -1,4 +1,4 @@
-import java.awt.Component;
+//import java.awt.Component;
 import java.awt.event.*;
 import javax.swing.*;
 
@@ -16,7 +16,7 @@ public class MyFrame {
 		JLabel welcome = new JLabel("Welcome to the database!");
 		JButton views = new JButton("Views/Stored Procedures");
 		JButton tablesAndEdit = new JButton("Tables/Edit");
-		
+			
 		welcome.setBounds(20, 10, 200, 20);
 		views.setBounds(50, 40, 200, 20);
 		tablesAndEdit.setBounds(50, 80, 200, 20);
@@ -26,17 +26,17 @@ public class MyFrame {
 		frame.add(tablesAndEdit);
 		
 		views.addActionListener(new ActionListener() {
-    			public void actionPerformed(ActionEvent e) {
-    				viewBuilder();
-    			}
-		});
-
-		tablesAndEdit.addActionListener(new ActionListener() {
-	    		public void actionPerformed(ActionEvent e) {
-	    			tableBuilder();
-	    		}
+			public void actionPerformed(ActionEvent e) {
+				viewBuilder();
+			}
 		});
 		
+		tablesAndEdit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				tableBuilder();
+			}
+		});
+			
 		frame.setVisible(true);
 	}
 	
@@ -56,21 +56,21 @@ public class MyFrame {
 		
 		
 		frame.add(btn);
-	    frame.add(tableSelect);
-	    frame.setVisible(true);
-	    
-	    btn.addActionListener(new ActionListener() {
-	    		public void actionPerformed(ActionEvent e) {
-	    			//displayTable
-	    			System.out.println(cb.getSelectedIndex());
-	    		}
-	    });
+		frame.add(tableSelect);
+		frame.setVisible(true);
+		
+		btn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			//displayTable
+			System.out.println(cb.getSelectedIndex());
+			}
+		});
 	}
 	
 	public void viewBuilder() {
 		frameInit("Views");
 		addMenuReturnButton();
-	    	frame.setVisible(true);
+		frame.setVisible(true);
 	}
 	
 	public void frameInit(String name) {
@@ -81,8 +81,8 @@ public class MyFrame {
 		frame.setSize(300,150);
 		frame.setLocation(425,250);
 		frame.setLayout(null);
-	    	frame.setResizable(false);
-	    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setResizable(false);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
 	public void addMenuReturnButton() {
@@ -90,7 +90,7 @@ public class MyFrame {
 		mainMenu.setBounds(10, 10, 50, 20);
 		mainMenu.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				menuBuilder();
+			menuBuilder();
 			}
 		});
 		frame.add(mainMenu);
