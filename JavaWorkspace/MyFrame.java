@@ -68,16 +68,16 @@ public class MyFrame {
 		});
 	}
 	public void displayTable(int table) {
-        JPanel panel = new JPanel(new GridLayout(0,1));
-        for (int i = 0; i < 10; i++) {
-            panel.add(new JButton("Test " + i));
-        }
-        JScrollPane scrollPane = new JScrollPane(panel);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setBounds(10, 40, 100, 80);
+		JPanel panel = new JPanel(new GridLayout(0,1));
+		for (int i = 0; i < 10; i++) {
+			panel.add(new JButton("Test " + i));//temporary
+		}
+		JScrollPane scrollPane = new JScrollPane(panel);
+		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		scrollPane.setBounds(10, 40, 100, 80);
 		frame.add(scrollPane);
-        frame.setVisible(true);
+		frame.setVisible(true);
 		System.out.println(table);
 	}
 	
