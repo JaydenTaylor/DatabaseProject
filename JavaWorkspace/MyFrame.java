@@ -1,14 +1,21 @@
-//import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.*;
 import javax.swing.*;
+import java.util.ArrayList;
 
 public class MyFrame {
-	private JFrame frame = new JFrame();
+	private JFrame frame;
+	private JLabel text;
+	private JScrollPane scrollPane;
+	private JPanel panel;
+	
+	private ArrayList<String> tableNames = new ArrayList<String>();
+	private ArrayList<ArrayList<String>> tables = new ArrayList<ArrayList<String>>();
 	
 	public MyFrame() {
+		frame = new JFrame();
 		menuBuilder();
+		populateData();
 	}
 	
 	//builds the main menu
@@ -16,12 +23,12 @@ public class MyFrame {
 		frameInit("Database Menu");
 		
 		JLabel welcome = new JLabel("Welcome to the database!");
-		JButton views = new JButton("Views/Stored Procedures");
+		JButton views = new JButton("Views(Bonus)");
 		JButton tablesAndEdit = new JButton("Tables/Edit");
 			
 		welcome.setBounds(20, 10, 200, 20);
-		views.setBounds(50, 40, 200, 20);
-		tablesAndEdit.setBounds(50, 80, 200, 20);
+		views.setBounds(50, 80, 200, 20);
+		tablesAndEdit.setBounds(50, 40, 200, 20);
 		
 		frame.add(views);
 		frame.add(welcome);
@@ -46,17 +53,20 @@ public class MyFrame {
 		frameInit("Table View");
 		addMenuReturnButton();
 		
+		text = new JLabel();
 		JPanel tableSelect = new JPanel();
 		JButton btn = new JButton("OK");
 		
-		String choices[] = {"Table 1", "Table 2", "Secret Fancy Table"};
-		JComboBox<String> cb = new JComboBox<String>(choices);
+		String c[] = new String[tableNames.size()];
+		tableNames.toArray(c);
+		JComboBox<String> cb = new JComboBox<String>(c);
 		
+		text.setBounds(175, 40, 200, 20);
 		btn.setBounds(235, 10, 50, 20);
-		tableSelect.setBounds(60, 2, 175, 50);
+		tableSelect.setBounds(60, 2, 150, 35);
 		tableSelect.add(cb);
 		
-		
+		frame.add(text);
 		frame.add(btn);
 		frame.add(tableSelect);
 		frame.setVisible(true);
@@ -68,17 +78,28 @@ public class MyFrame {
 		});
 	}
 	public void displayTable(int table) {
-		JPanel panel = new JPanel(new GridLayout(0,1));
+		tableBuilder();
+		panel = new JPanel(new GridLayout(0,1));
 		for (int i = 0; i < 10; i++) {
-			panel.add(new JButton("Test " + i));//temporary
+			int item = i;
+			JButton b = new JButton(tableNames.get(table) + " Test: " + i);
+			b.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					itemDisplay(table, item);
+				}
+			});
+			panel.add(b);
 		}
-		JScrollPane scrollPane = new JScrollPane(panel);
+		scrollPane = new JScrollPane(panel);
 		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-		scrollPane.setBounds(10, 40, 100, 80);
+		scrollPane.setBounds(10, 40, 150, 80);
 		frame.add(scrollPane);
 		frame.setVisible(true);
-		System.out.println(table);
+	}
+	
+	public void itemDisplay(int table, int item) {
+		text.setText(tables.get(table).get(item));
 	}
 	
 	public void viewBuilder() {
@@ -108,5 +129,21 @@ public class MyFrame {
 			}
 		});
 		frame.add(mainMenu);
+	}
+	//this will integrate our data base
+	public void populateData() {
+		String choices[] = {"Table 1", "Table 2", "Table 3"};
+		for(String s: choices)
+			tableNames.add(s);
+		ArrayList<String> table1Rows = new ArrayList<String>();
+		ArrayList<String> table2Rows = new ArrayList<String>();
+		ArrayList<String> table3Rows = new ArrayList<String>();
+		tables.add(table1Rows);
+		tables.add(table2Rows);
+		tables.add(table3Rows);
+		for(int i = 0; i < 3; i++)
+			for(int j = 0; j < 10; j++)
+				tables.get(i).add("Table: " + (i + 1) + "\tItem: " + j);
+
 	}
 }
