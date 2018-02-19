@@ -140,8 +140,6 @@ public class MyFrame {
 						displayTable(currentTable);
 					}
 				});
-				
-				
 				addEntry.add(submit);
 				addEntry.add(text1);
 				addEntry.add(text2);
@@ -158,8 +156,10 @@ public class MyFrame {
 		delete.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//remove data
-				tables.get(currentTable).remove(currentButton);
-				displayTable(currentTable);
+				if(!tables.get(currentTable).isEmpty()) {
+					tables.get(currentTable).remove(currentButton);
+					displayTable(currentTable);
+				}
 			}
 		});
 		
@@ -193,6 +193,7 @@ public class MyFrame {
 		
 		frame.add(scrollPane);
 		frame.setVisible(true);
+		frame.revalidate();
 	}
 	//displays specific item, called when item selected in panel
 	public void itemDisplay(int table, int item) {
@@ -233,12 +234,9 @@ public class MyFrame {
 		String choices[] = {"Table 1", "Table 2", "Table 3"};
 		for(String s: choices)
 			tableNames.add(s);
-		ArrayList<String> table1Rows = new ArrayList<String>();
-		ArrayList<String> table2Rows = new ArrayList<String>();
-		ArrayList<String> table3Rows = new ArrayList<String>();
-		tables.add(table1Rows);
-		tables.add(table2Rows);
-		tables.add(table3Rows);
+		tables.add(new ArrayList<String>());
+		tables.add(new ArrayList<String>());
+		tables.add(new ArrayList<String>());
 		for(int i = 0; i < 3; i++)
 			for(int j = 0; j < 10; j++)
 				tables.get(i).add("Table:" + (i + 1) + "\tItem:" + j);
