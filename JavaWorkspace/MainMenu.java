@@ -20,7 +20,7 @@ public class MainMenu {
 		frame.setSize(300, 300);
 		frame.setLocation(425, 250);
 		frame.setLayout(null);
-		frame.setResizable(false);
+		frame.setResizable(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(300, 150);
 		
@@ -52,7 +52,7 @@ public class MainMenu {
 				}
 			}
 		});
-			
+		
 		frame.setVisible(true);
 	}
 	

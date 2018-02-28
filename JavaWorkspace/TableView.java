@@ -37,7 +37,6 @@ public class TableView {
 		instantiate();
 		addReturnButton(frame);
 		addComponents();
-		
 		frame.setVisible(true);
 	}
 	
@@ -87,7 +86,7 @@ public class TableView {
 		frame.setSize(300, 300);
 		frame.setLocation(425, 250);
 		frame.setLayout(null);
-		frame.setResizable(false);
+		frame.setResizable(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
@@ -171,7 +170,7 @@ public class TableView {
 		JFrame addEntry = new JFrame();
 		addEntry.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		addEntry.setLayout(null);
-		addEntry.setResizable(false);
+		addEntry.setResizable(true);
 		addEntry.setTitle("Add Entry");
 		addEntry.setSize(300,150);
 		addEntry.setLocation(425,250);
