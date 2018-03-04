@@ -1,3 +1,4 @@
+package DB;
 
 public class Attribute {
 	private String type;
@@ -10,5 +11,9 @@ public class Attribute {
 	
 	public String toString() {
 		return type + ": " + value;
+	}
+	
+	public String getValue() {
+		return value;
 	}
 }

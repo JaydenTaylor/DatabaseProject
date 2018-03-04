@@ -12,6 +12,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
+import DB.Database;
+import DB.Row;
+import DB.Table;
+
 public class TableView {
 	
 	private static JFrame frame;
@@ -37,6 +41,7 @@ public class TableView {
 		instantiate();
 		addReturnButton(frame);
 		addComponents();
+		
 		frame.setVisible(true);
 	}
 	
@@ -73,6 +78,7 @@ public class TableView {
 	
 	//displays specific item, called when item selected in panel
 	public static void itemDisplay(int table, int item) {
+		currentTable = table;
 		currentButton = item;
 		for(int i = 0; i < tables.get(table).getRow(item).size(); i++) 
 			texts.get(i).setText(tables.get(table).getRow(item).getAttribute(i).toString());
@@ -142,7 +148,12 @@ public class TableView {
 		
 		add.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				addPanel();
+				try {
+					addPanel();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		});
 		
@@ -150,10 +161,12 @@ public class TableView {
 			public void actionPerformed(ActionEvent e) {
 				//remove data
 				if(!(tables.get(currentTable).size() == 0)) {
-					tables.get(currentTable).remove(currentButton);
 					try {
+						Database.remove(currentTable, currentButton);
+						tables.get(currentTable).remove(currentButton);
 						displayTable(currentTable);
 					} catch (SQLException e1) {
+						e1.printStackTrace();
 					}
 				}
 			}
@@ -166,7 +179,7 @@ public class TableView {
 		frame.add(tableSelect);
 	}
 	
-	public static void addPanel() {
+	public static void addPanel() throws SQLException {
 		JFrame addEntry = new JFrame();
 		addEntry.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		addEntry.setLayout(null);
@@ -177,19 +190,21 @@ public class TableView {
 		
 		addReturnButton(addEntry);
 		
-		JLabel ex1 = new JLabel("Attribute 1");
-		JLabel ex2 = new JLabel("Attribute 2");
-		JLabel ex3 = new JLabel("Attribute 3");
-		ex1.setBounds(10, 40, 100, 25);
-		ex2.setBounds(10, 70, 100, 25);
-		ex3.setBounds(10, 100, 100, 25);
+		ArrayList<JTextField> texts = new ArrayList<JTextField>();
+		ArrayList<String> columns = Database.getColumns(currentTable);
+		addEntry.setSize(300, 60 + (columns.size() * 30));
+		for(int i = 0; i < columns.size(); i++) {
+			JTextField textBox = new JTextField();
+			JLabel label = new JLabel(columns.get(i));
+			int y = 40 + (i * 30); //spacing
+			label.setBounds(10, y, 100, 25);
+			textBox.setBounds(110, y, 100, 25);
+			addEntry.add(label);
+			addEntry.add(textBox);
+			texts.add(textBox);
+		}
 		
-		JTextField text1 = new JTextField();
-		JTextField text2 = new JTextField();
-		JTextField text3 = new JTextField();
-		text1.setBounds(110, 40, 100, 25);
-		text2.setBounds(110, 70, 100, 25);
-		text3.setBounds(110, 100, 100, 25);
+		int size = columns.size();
 		
 		JButton submit = new JButton("Submit");
 		submit.setBounds(225, 100, 50, 20);
@@ -197,25 +212,19 @@ public class TableView {
 			public void actionPerformed(ActionEvent e) {
 				addEntry.setVisible(false);
 				Row input = new Row();
-				input.addAttribute("Test: ", text1.getText());
-				input.addAttribute("Test: ", text2.getText());
-				input.addAttribute("Test: ", text3.getText());
+				for(int i = 0; i < size; i++)
+					input.addAttribute(columns.get(i), texts.get(i).getText());
 				tables.get(currentTable).add(input);
 				try {
 					displayTable(currentTable);
+					Database.add(currentTable, currentButton, size, input);
 				} catch (SQLException e1) {
-					
+					e1.printStackTrace();
 				}
 			}
 		});
 		
 		addEntry.add(submit);
-		addEntry.add(text1);
-		addEntry.add(text2);
-		addEntry.add(text3);
-		addEntry.add(ex1);
-		addEntry.add(ex2);
-		addEntry.add(ex3);
 		addEntry.setVisible(true);
 		frame.setVisible(false);
 	}
