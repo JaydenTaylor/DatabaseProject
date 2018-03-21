@@ -1,17 +1,19 @@
 package DB;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Database {
 	private static Database database;
-	public static Connection connection;
+	private static Connection connection;
 	private static ArrayList<Table> tables;
-	
-	public static final String[] tableCodes = 
+	private static Map<Integer, ArrayList<String>> dependencyMap;
+	private static final String[] tableCodes = 
 		{"Course_ID", "Department_ID", null, "Prof_ID", "St_ID", "Book_ID"};
 	/*
 	 * currentTable is a refcode for a table
-	 * 
+	 * Refcodes are stored in Constants.java
 	 * 				refcodes
 	 * COURSE		0
 	 * DEPARTMENT	1
@@ -20,17 +22,13 @@ public class Database {
 	 * STUDENT		4
 	 * BOOK			5
 	 *  
-	public static final String STUDENT = "St_ID";
-	public static final String PROF = "Prof_ID";
-	public static final String DEPARTMENT = "Department_ID";
-	public static final String COURSE = "Course_ID";
-	//NO ENROLLMENT ID AS OF NOW
-	//public static final String ENROLLMENT = "";
-	public static final String TEXTBOOK = "Book_ID";
-	*/
+	 */
+	
 	private Database() throws SQLException {
 
 		tables = new ArrayList<Table>();
+		
+		dependencyMap = new HashMap<Integer, ArrayList<String>>();
 		
 		String url = "jdbc:mysql://localhost:3306/StudentRecord";
 		String username = "Group";
@@ -57,6 +55,24 @@ public class Database {
 				cur.add(row);
 			}
 		}
+		for(int i = 0; i < tables.size(); i++) {
+			dependencyMap.put(i, new ArrayList<String>());
+			connection = DriverManager.getConnection(url, username, password);
+			stmt = connection.createStatement();
+			rs = stmt.executeQuery("select" + 
+					"    referenced_table_name as 'references',  " + 
+					"    table_name as 'foreign key' " + 
+					"from" + 
+					"    information_schema.key_column_usage " + 
+					"where" + 
+					"    referenced_table_name is not null" + 
+					"    and table_schema = 'StudentRecord' " +
+					"	 and table_name = '" + tables.get(i).getName() + "';");
+			while (rs.next()) {
+				dependencyMap.get(i).add(rs.getString(1));
+			}
+		}
+		System.out.println(dependencyMap);
 	}
 	public static void instantiate() throws SQLException {
 		database = new Database();
@@ -99,7 +115,7 @@ public class Database {
 	}
 	
 	public static void add(int currentTable,int currentButton, int size, Row input) throws SQLException {
-		//tables.get(currentTable).add(input);
+		tables.get(currentTable).add(input);
 		Statement stmt = connection.createStatement();
 		String query = "INSERT INTO "
 				+ tables.get(currentTable).getName()
@@ -117,8 +133,8 @@ public class Database {
 			System.out.println("ADD FAIL");
 	}
 
-	public static void remove(int currentTable, int currentButton) throws SQLException {
-		Statement stmt = connection.createStatement();
+	public static boolean remove(int currentTable, int currentButton)  {
+		Statement stmt;
 		String query = "DELETE FROM " 
 				+ tables.get(currentTable).getName()
 				+ " WHERE " 
@@ -127,7 +143,24 @@ public class Database {
 				+ tables.get(currentTable).getRow(currentButton)
 					.getAttribute(0).getValue();
 		System.out.println(query);
-		if(stmt.execute(query))
-			System.out.println("DELETE FAIL");
+		try {
+			stmt = connection.createStatement();
+			stmt.execute(query);
+		} catch (SQLException e) {
+			for(int i = 0; i < dependencyMap.size(); i++) {
+				if(dependencyMap.get(i).contains(tables.get(currentTable).getName())) 
+					System.out.println(tables.get(currentTable).getName() +
+									" is depended on by " +
+									tables.get(i).getName());
+			}
+			return false;
+		}
+		return true;
+		
+	}
+	
+	//validate row
+	public static boolean validateRow(Row row) {
+		return false;
 	}
 }

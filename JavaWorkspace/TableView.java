@@ -33,7 +33,11 @@ public class TableView {
 	private static ArrayList<Table> tables;
 	
 	private static int currentTable = 0, currentButton = 0;
-	
+	/**
+	 * Updates Current frame to TableView
+	 * @param f Current Frame reference
+	 * @throws SQLException
+	 */
 	public static void updateFrame(JFrame f) throws SQLException {
 		frame = f;
 		tables = Database.getTables();
@@ -54,7 +58,7 @@ public class TableView {
 		
 		for (int i = 0; i < tables.get(table).size(); i++) {
 			int item = i;
-			JButton b = new JButton("Entry: " + i);
+			JButton b = new JButton(tables.get(currentTable).getName() + ": " + i);
 			b.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					itemDisplay(table, item);
@@ -89,7 +93,7 @@ public class TableView {
 		frame.setVisible(false);
 		frame = new JFrame();
 		frame.setTitle("Table View");
-		frame.setSize(300, 300);
+		frame.setSize(450, 300);
 		frame.setLocation(425, 250);
 		frame.setLayout(null);
 		frame.setResizable(true);
@@ -121,7 +125,7 @@ public class TableView {
 		JComboBox<String> cb = new JComboBox<String>(c);
 		for(int i = 0; i < 10; i++) {
 			JLabel text = new JLabel();
-			text.setBounds(175, 40, 200, 20 + (40 * i));
+			text.setBounds(175, 40, 800, 20 + (40 * i));
 			texts.add(text);
 			frame.add(text);
 		}
@@ -162,9 +166,12 @@ public class TableView {
 				//remove data
 				if(!(tables.get(currentTable).size() == 0)) {
 					try {
-						Database.remove(currentTable, currentButton);
-						tables.get(currentTable).remove(currentButton);
-						displayTable(currentTable);
+						if(Database.remove(currentTable, currentButton)) {
+							tables.get(currentTable).remove(currentButton);
+							displayTable(currentTable);
+						} else {
+							//TODO: POPUP FAILURE AND WHy
+						}
 					} catch (SQLException e1) {
 						e1.printStackTrace();
 					}
@@ -207,7 +214,7 @@ public class TableView {
 		int size = columns.size();
 		
 		JButton submit = new JButton("Submit");
-		submit.setBounds(225, 100, 50, 20);
+		submit.setBounds(70, 10, 50, 20);
 		submit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				addEntry.setVisible(false);
