@@ -3,13 +3,18 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
+/**
+ * Singleton database class
+ * Manages database
+ * @author jaydentaylor
+ *
+ */
 public class Database {
 	private static Database database;
 	private static Connection connection;
-	private static ArrayList<Table> tables;
-	private static Map<Integer, ArrayList<String>> dependencyMap;
-	private static final String[] tableCodes = 
+	public static ArrayList<Table> tables;
+	public static Map<Integer, ArrayList<String>> dependencyMap;
+	public static final String[] tableCodes = 
 		{"Course_ID", "Department_ID", null, "Prof_ID", "St_ID", "Book_ID"};
 	/*
 	 * currentTable is a refcode for a table
@@ -115,13 +120,13 @@ public class Database {
 	}
 	
 	public static void add(int currentTable,int currentButton, int size, Row input) throws SQLException {
-		tables.get(currentTable).add(input);
+		
 		Statement stmt = connection.createStatement();
 		String query = "INSERT INTO "
 				+ tables.get(currentTable).getName()
 				+ " VALUES ('";
 		for(int i = 0; i < size; i++)  {
-			query += tables.get(currentTable).getRow(currentButton).getAttribute(i).getValue();			
+			query += tables.get(currentTable).getRow(tables.get(currentTable).size()-1).getAttribute(i).getValue();			
 			if(i < size - 1)
 				query += "', '";
 			else
@@ -131,6 +136,10 @@ public class Database {
 		System.out.println(query);
 		if(stmt.execute(query))
 			System.out.println("ADD FAIL");
+	}
+	//TODO Edit functionality
+	public static void edit(int currentTable,int currentButton, int size, Row input) throws SQLException {
+		
 	}
 
 	public static boolean remove(int currentTable, int currentButton)  {
@@ -146,12 +155,13 @@ public class Database {
 		try {
 			stmt = connection.createStatement();
 			stmt.execute(query);
+			tables.get(currentTable).remove(currentButton);
 		} catch (SQLException e) {
 			for(int i = 0; i < dependencyMap.size(); i++) {
 				if(dependencyMap.get(i).contains(tables.get(currentTable).getName())) 
 					System.out.println(tables.get(currentTable).getName() +
-									" is depended on by " +
-									tables.get(i).getName());
+						" is depended on by " + tables.get(i).getName());
+				
 			}
 			return false;
 		}
@@ -159,8 +169,5 @@ public class Database {
 		
 	}
 	
-	//validate row
-	public static boolean validateRow(Row row) {
-		return false;
-	}
+
 }

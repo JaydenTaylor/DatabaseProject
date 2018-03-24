@@ -8,6 +8,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -26,11 +27,15 @@ public class TableView {
 	private static ArrayList<JLabel> texts;
 	private static JButton add;
 	private static JButton delete;
+	private static JButton edit;
 	
 	private static JPanel tableSelect;
 	private static JButton btn;
 
-	private static ArrayList<Table> tables;
+	
+	
+	//TODO: set spinner to correct table
+	//TODO: select item 0 on initial table display
 	
 	private static int currentTable = 0, currentButton = 0;
 	/**
@@ -40,7 +45,6 @@ public class TableView {
 	 */
 	public static void updateFrame(JFrame f) throws SQLException {
 		frame = f;
-		tables = Database.getTables();
 		
 		instantiate();
 		addReturnButton(frame);
@@ -56,9 +60,9 @@ public class TableView {
 		
 		panel = new JPanel(new GridLayout(0,1));
 		
-		for (int i = 0; i < tables.get(table).size(); i++) {
+		for (int i = 0; i < Database.tables.get(table).size(); i++) {
 			int item = i;
-			JButton b = new JButton(tables.get(currentTable).getName() + ": " + i);
+			JButton b = new JButton(Database.tables.get(table).getName() + ": " + i);
 			b.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					itemDisplay(table, item);
@@ -69,6 +73,7 @@ public class TableView {
 		
 		add.setVisible(true);
 		delete.setVisible(true);
+		edit.setVisible(true);
 		
 		scrollPane = new JScrollPane(panel);
 		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -84,8 +89,8 @@ public class TableView {
 	public static void itemDisplay(int table, int item) {
 		currentTable = table;
 		currentButton = item;
-		for(int i = 0; i < tables.get(table).getRow(item).size(); i++) 
-			texts.get(i).setText(tables.get(table).getRow(item).getAttribute(i).toString());
+		for(int i = 0; i < Database.tables.get(table).getRow(item).size(); i++) 
+			texts.get(i).setText(Database.tables.get(table).getRow(item).getAttribute(i).toString());
 		//text.setText(tables.get(table).getRow(item).toString());
 	}
 	
@@ -116,12 +121,13 @@ public class TableView {
 		texts = new ArrayList<JLabel>();
 		add = new JButton("Add");
 		delete = new JButton("Delete");
+		edit = new JButton("Edit");
 		tableSelect = new JPanel();
 		btn = new JButton("OK");
 		
-		String c[] = new String[tables.size()];
-		for(int i = 0; i < tables.size(); i++)
-			c[i] = tables.get(i).getName();
+		String c[] = new String[Database.tables.size()];
+		for(int i = 0; i < Database.tables.size(); i++)
+			c[i] = Database.tables.get(i).getName();
 		JComboBox<String> cb = new JComboBox<String>(c);
 		for(int i = 0; i < 10; i++) {
 			JLabel text = new JLabel();
@@ -132,6 +138,7 @@ public class TableView {
 		
 		add.setBounds(165, 240, 60, 20);
 		delete.setBounds(230, 240, 60, 20);
+		edit.setBounds(295, 240, 60, 20);
 		btn.setBounds(235, 10, 50, 20);
 		tableSelect.setBounds(60, 2, 150, 35);
 		
@@ -139,6 +146,7 @@ public class TableView {
 		
 		add.setVisible(false);
 		delete.setVisible(false);
+		edit.setVisible(false);
 		
 		btn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -153,25 +161,45 @@ public class TableView {
 		add.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					addPanel();
+					addPanel(false);
 				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			}
 		});
 		
+		//TODO: EDIT BUTTON
+		edit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					addPanel(true);
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		
+		
 		delete.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//remove data
-				if(!(tables.get(currentTable).size() == 0)) {
+				if(!(Database.tables.get(currentTable).size() == 0)) {
 					try {
 						if(Database.remove(currentTable, currentButton)) {
-							tables.get(currentTable).remove(currentButton);
 							displayTable(currentTable);
 						} else {
-							//TODO: POPUP FAILURE AND WHy
+							//TODO: Optimize error message
+							String message = "";
+							for(int i = 0; i < Database.dependencyMap.size(); i++) {
+								if(Database.dependencyMap.get(i).contains(Database.tables.get(currentTable).getName())) 
+									message += Database.tables.get(currentTable).getName() +
+										" is depended on by " + Database.tables.get(i).getName() + "\n";
+								
+							}
+							JOptionPane.showMessageDialog(frame, message);
 						}
+						
+						
 					} catch (SQLException e1) {
 						e1.printStackTrace();
 					}
@@ -181,12 +209,13 @@ public class TableView {
 		
 		
 		frame.add(add);
+		frame.add(edit);
 		frame.add(delete);
 		frame.add(btn);
 		frame.add(tableSelect);
 	}
 	
-	public static void addPanel() throws SQLException {
+	public static void addPanel(boolean edit) throws SQLException {
 		JFrame addEntry = new JFrame();
 		addEntry.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		addEntry.setLayout(null);
@@ -206,6 +235,9 @@ public class TableView {
 			int y = 40 + (i * 30); //spacing
 			label.setBounds(10, y, 100, 25);
 			textBox.setBounds(110, y, 100, 25);
+			if(edit) {
+				textBox.setText(Database.tables.get(currentTable).getRow(currentButton).getAttribute(i).getValue());
+			}
 			addEntry.add(label);
 			addEntry.add(textBox);
 			texts.add(textBox);
@@ -221,10 +253,14 @@ public class TableView {
 				Row input = new Row();
 				for(int i = 0; i < size; i++)
 					input.addAttribute(columns.get(i), texts.get(i).getText());
-				tables.get(currentTable).add(input);
+				if(!edit)
+					Database.tables.get(currentTable).add(input);
 				try {
 					displayTable(currentTable);
-					Database.add(currentTable, currentButton, size, input);
+					if(edit)
+						Database.edit(currentTable, currentButton, size, input);
+					else
+						Database.add(currentTable, currentButton, size, input);
 				} catch (SQLException e1) {
 					e1.printStackTrace();
 				}
