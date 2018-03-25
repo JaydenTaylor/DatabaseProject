@@ -13,9 +13,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
-import DB.Database;
-import DB.Row;
-import DB.Table;
+import DB.*;
 
 public class TableView {
 	
@@ -74,6 +72,8 @@ public class TableView {
 		add.setVisible(true);
 		delete.setVisible(true);
 		edit.setVisible(true);
+		if(currentTable == Constants.ENROLLMENT)
+			edit.setEnabled(false);
 		
 		scrollPane = new JScrollPane(panel);
 		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -110,7 +110,7 @@ public class TableView {
 		mainMenu.setBounds(10, 10, 50, 20);
 		mainMenu.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				frame.setVisible(false);
+				f.setVisible(false);
 				MainMenu.updateFrame(frame);
 			}
 		});
@@ -168,7 +168,6 @@ public class TableView {
 			}
 		});
 		
-		//TODO: EDIT BUTTON
 		edit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -182,20 +181,22 @@ public class TableView {
 		
 		delete.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//remove data
 				if(!(Database.tables.get(currentTable).size() == 0)) {
 					try {
 						if(Database.remove(currentTable, currentButton)) {
 							displayTable(currentTable);
 						} else {
-							//TODO: Optimize error message
 							String message = "";
 							for(int i = 0; i < Database.dependencyMap.size(); i++) {
 								if(Database.dependencyMap.get(i).contains(Database.tables.get(currentTable).getName())) 
-									message += Database.tables.get(currentTable).getName() +
-										" is depended on by " + Database.tables.get(i).getName() + "\n";
+									message += "This " + Database.tables.get(currentTable).getName() +
+										" is depended on by entries in " + Database.tables.get(i).getName() + "\n";
 								
 							}
+							message += "You may not delete a " + Database.tables.get(currentTable).getName()
+									+ " that is referenced in other tables\n"
+									+ Database.tables.get(currentTable).getName()
+									+ " may only be deleted when no references exist";
 							JOptionPane.showMessageDialog(frame, message);
 						}
 						
@@ -217,22 +218,25 @@ public class TableView {
 	
 	public static void addPanel(boolean edit) throws SQLException {
 		JFrame addEntry = new JFrame();
+		
+		ArrayList<JTextField> texts = new ArrayList<JTextField>();
+		ArrayList<String> columns = Database.getColumns(currentTable);
+		
 		addEntry.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		addEntry.setLayout(null);
 		addEntry.setResizable(true);
 		addEntry.setTitle("Add Entry");
-		addEntry.setSize(300,150);
+		addEntry.setSize(300,35 * columns.size());
 		addEntry.setLocation(425,250);
 		
 		addReturnButton(addEntry);
 		
-		ArrayList<JTextField> texts = new ArrayList<JTextField>();
-		ArrayList<String> columns = Database.getColumns(currentTable);
+		
 		addEntry.setSize(300, 60 + (columns.size() * 30));
-		for(int i = 0; i < columns.size(); i++) {
+		for(int i = 1; i < columns.size(); i++) {
 			JTextField textBox = new JTextField();
 			JLabel label = new JLabel(columns.get(i));
-			int y = 40 + (i * 30); //spacing
+			int y = 40 + ((i - 1) * 30); //spacing
 			label.setBounds(10, y, 100, 25);
 			textBox.setBounds(110, y, 100, 25);
 			if(edit) {

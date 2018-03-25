@@ -44,7 +44,6 @@ public class MainMenu {
 		
 		tablesAndEdit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//tableBuilder();
 				try {
 					TableView.updateFrame(frame);
 				} catch (SQLException e1) {

@@ -137,9 +137,40 @@ public class Database {
 		if(stmt.execute(query))
 			System.out.println("ADD FAIL");
 	}
-	//TODO Edit functionality
-	public static void edit(int currentTable,int currentButton, int size, Row input) throws SQLException {
+	public static boolean edit(int currentTable,int currentButton, int size, Row input) throws SQLException {
+		Statement statment;
 		
+		String query = "UPDATE " + tables.get(currentTable).getName() + " SET ";
+		for(int i = 1; i < size; i++) {
+			query += tables.get(currentTable).getRow(currentButton).getAttribute(i).getType()
+					+ " = '"
+					+ input.getAttribute(i).getValue();
+			if(i < size - 1)
+				query += "', ";
+			else
+				query += "'";
+		}
+		
+		query += " WHERE " 
+				+ tableCodes[currentTable]
+				+ "="
+				+ tables.get(currentTable).getRow(currentButton)
+					.getAttribute(0).getValue();
+		System.out.println(query);
+		try {
+			statment = connection.createStatement();
+			statment.execute(query);
+			//tables.get(currentTable).remove(currentButton);
+		} catch (SQLException e) {
+			for(int i = 0; i < dependencyMap.size(); i++) {
+				if(dependencyMap.get(i).contains(tables.get(currentTable).getName())) 
+					System.out.println(tables.get(currentTable).getName() +
+						" is depended on by " + tables.get(i).getName());
+				
+			}
+			return false;
+		}
+		return true;
 	}
 
 	public static boolean remove(int currentTable, int currentButton)  {
