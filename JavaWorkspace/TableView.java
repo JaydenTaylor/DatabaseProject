@@ -233,14 +233,16 @@ public class TableView {
 		
 		
 		addEntry.setSize(300, 60 + (columns.size() * 30));
-		for(int i = 1; i < columns.size(); i++) {
+		for(int i = 0; i < columns.size(); i++) {
 			JTextField textBox = new JTextField();
 			JLabel label = new JLabel(columns.get(i));
-			int y = 40 + ((i - 1) * 30); //spacing
+			int y = 40 + ((i) * 30); //spacing
 			label.setBounds(10, y, 100, 25);
 			textBox.setBounds(110, y, 100, 25);
 			if(edit) {
 				textBox.setText(Database.tables.get(currentTable).getRow(currentButton).getAttribute(i).getValue());
+				if(i == 0)
+					textBox.setEnabled(false);
 			}
 			addEntry.add(label);
 			addEntry.add(textBox);

@@ -22,26 +22,23 @@ public class MainMenu {
 		frame.setLayout(null);
 		frame.setResizable(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(300, 150);
+		frame.setSize(300, 200);
 		
 		JLabel welcome = new JLabel("Welcome to the database!");
-		JButton views = new JButton("Views(Bonus)");
+		JButton views = new JButton("View Courses");
+		JButton feeviews = new JButton("View Student Fees");
 		JButton tablesAndEdit = new JButton("Tables/Edit");
 		
 		welcome.setBounds(20, 10, 200, 20);
 		views.setBounds(50, 80, 200, 20);
 		tablesAndEdit.setBounds(50, 40, 200, 20);
+		feeviews.setBounds(50, 120, 200, 20);
 		
 		frame.add(views);
 		frame.add(welcome);
 		frame.add(tablesAndEdit);
-		
-		views.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				//viewBuilder();
-			}
-		});
-		
+		frame.add(feeviews);
+				
 		tablesAndEdit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -52,6 +49,26 @@ public class MainMenu {
 			}
 		});
 		
+		views.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					CourseView.updateFrame(frame);
+				} catch (SQLException e1) {
+					
+				}
+			}
+		});
+		
+		feeviews.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					FeeView.updateFrame(frame);
+				} catch (SQLException e1) {
+					
+				}
+			}
+		});
+
 		frame.setVisible(true);
 	}
 	

@@ -137,6 +137,7 @@ public class Database {
 		if(stmt.execute(query))
 			System.out.println("ADD FAIL");
 	}
+	//TODO EDIT LOCALLY
 	public static boolean edit(int currentTable,int currentButton, int size, Row input) throws SQLException {
 		Statement statment;
 		
