@@ -1,6 +1,7 @@
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.Insets;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -120,10 +121,14 @@ public class TableView {
 	public static void addComponents() {
 		texts = new ArrayList<JLabel>();
 		add = new JButton("Add");
+		add.setMargin(new Insets(0,0,0,0));
 		delete = new JButton("Delete");
+		delete.setMargin(new Insets(0,0,0,0));
 		edit = new JButton("Edit");
+		edit.setMargin(new Insets(0,0,0,0));
 		tableSelect = new JPanel();
 		btn = new JButton("OK");
+		btn.setMargin(new Insets(0,0,0,0));
 		
 		String c[] = new String[Database.tables.size()];
 		for(int i = 0; i < Database.tables.size(); i++)

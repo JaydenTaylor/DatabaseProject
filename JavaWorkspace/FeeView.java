@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -60,6 +61,7 @@ public class FeeView {
 	public static void updateFrame(JFrame f) throws SQLException {
 		frame = f;
 		table.setAutoCreateRowSorter(true);
+		table.setGridColor(Color.LIGHT_GRAY);
 		
 		initDb();
 		instantiate();
@@ -76,9 +78,11 @@ public class FeeView {
 		chckbx2.setBounds(300, 10, 100, 20);
 		chckbx2.setSelected(true);
 		
-		JLabel rangeFrom = new JLabel("Range:        From");
-		rangeFrom.setBounds(50, 45, 100, 20);
-		JLabel rangeTo = new JLabel("To");
+		JLabel range = new JLabel("Range:");
+		range.setBounds(50, 45, 100, 20);
+		JLabel rangeFrom = new JLabel("From:");
+		rangeFrom.setBounds(115, 45, 100, 20);
+		JLabel rangeTo = new JLabel("To:");
 		rangeTo.setBounds(230, 45, 70, 20);
 		
 		JTextField textField1 = new JTextField();
@@ -116,21 +120,22 @@ public class FeeView {
 			}
 		});
 
-		frame.add(scrollPane);	
-		frame.add(buttonx);
+		frame.add(scrollPane);
 		frame.add(chckbx1);
 		frame.add(chckbx2);
 		frame.add(textField1);
 		frame.add(textField2);
+		frame.add(range);		
 		frame.add(rangeFrom);
 		frame.add(rangeTo);
+		frame.add(buttonx);
 		addTable();
 		
 		frame.setVisible(true);
 	}
 	
 	static void addTable() {
-		TModel.setColumnIdentifiers(new Object[]{"Student Name", "Courses", "Type", "Fees"});		
+		TModel.setColumnIdentifiers(new Object[]{"Student Name", "Courses", "Type", "Fees($)"});		
 	}
 
 	

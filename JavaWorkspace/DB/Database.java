@@ -47,6 +47,9 @@ public class Database {
 			tables.add(new Table(rs.getString(1)));
 		}
 		
+		tables.remove(tables.size()-1);
+		tables.remove(tables.size()-1);
+		
 		Table cur;
 		for(int i = 0; i < tables.size(); i++) {
 			cur = tables.get(i);

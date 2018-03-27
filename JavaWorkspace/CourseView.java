@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -42,7 +43,8 @@ public class CourseView {
 	 */
 	public static void updateFrame(JFrame f) throws SQLException {
 		frame = f;
-		
+		table.setAutoCreateRowSorter(true);
+		table.setGridColor(Color.LIGHT_GRAY);
 		initDb();
 		instantiate();
 		addReturnButton(frame);
