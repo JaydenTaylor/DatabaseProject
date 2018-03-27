@@ -1,0 +1,26 @@
+We met as a full group to decided on business rules, design our data models and start the sql scripts
+
+
+Khang:
+	Business Rules
+	Data models
+	Bonus sql procedure
+	Java implementation of bonus view/procedure
+	
+Megan:
+	Business Rules
+	Data models
+	SQL insert statements
+	Bonus SQL view
+
+Emma:
+	Business Rules
+	Data models
+	Final Summary
+	Final Documents
+
+Jayden:
+	Business Rules
+	Data models
+	Java implementation of required functionality
+	
